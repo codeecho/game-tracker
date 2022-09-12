@@ -1,0 +1,14 @@
+const regions = {
+   1: 'Europe',
+   2: 'North America',
+   3: 'Australia',
+   4: 'New Zealand',
+   5: 'Japan',
+   6: 'China',
+   7: 'Asia',
+   8: 'Worldwide',
+   9: 'Korea',
+   10: 'Brazil' 
+}
+
+export default regions;

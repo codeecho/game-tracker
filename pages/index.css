@@ -1,0 +1,36 @@
+body {
+    background-image: none;
+}
+
+.mainContainer {
+    padding-top: 5px;
+}
+
+.card {
+    font-size: 12px;
+}
+
+.card-title {
+    font-size: 16px;
+}
+
+.acc-subtitle {
+    font-size:12px;
+}
+
+.carousel {
+    min-height: 600px;
+}
+
+.card-icon * {
+ width: 100%;
+}
+
+.card-icon span {
+    text-transform: uppercase;
+}
+
+.card-body {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
