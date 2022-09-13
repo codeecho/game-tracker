@@ -1,10 +1,10 @@
 import React from "react";
 import BacklogProvider from "./BacklogProvider";
-import AddGame from "./pages/AddGame";
-import Backlog from "./pages/Backlog";
-import EditGame from "./pages/EditGame";
-import Game from "./pages/Game";
-import Router, { useRouter } from "./Router";
+import AddGame from "../components/AddGame";
+import Backlog from "../components/Backlog";
+import EditGame from "../components/EditGame";
+import Game from "../components/Game";
+import Router, { useRouter } from "../Router";
 
 export default function App() {
   return (

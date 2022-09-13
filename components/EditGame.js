@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button, Container, Form, Table } from "react-bootstrap";
-import { useBacklog } from "../BacklogProvider";
-import Header from "../components/Header";
+import { useBacklog } from "../pages/BacklogProvider";
+import Header from "./Header";
 import reasons from "../constants/reasons";
 import states, { ABANDONED } from "../constants/states";
 import { useRouter } from "../Router";

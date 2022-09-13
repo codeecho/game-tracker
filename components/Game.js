@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Badge, Button, Container, Modal, Table } from "react-bootstrap";
 import { PencilFill, Trash } from "react-bootstrap-icons";
-import { useBacklog } from "../BacklogProvider";
-import Header from "../components/Header";
+import { useBacklog } from "../pages/BacklogProvider";
+import Header from "./Header";
 import { ABANDONED } from "../constants/states";
 import { useRouter } from "../Router";
 

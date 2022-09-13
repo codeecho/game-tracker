@@ -1,10 +1,10 @@
 import Button from 'react-bootstrap/Button';
-import { useBacklog } from '../BacklogProvider';
+import { useBacklog } from '../pages/BacklogProvider';
 import Carousel from 'react-bootstrap/Carousel';
-import Header from '../components/Header';
+import Header from './Header';
 import states, { ABANDONED } from '../constants/states';
 import { Badge, Card, Col, Container, Row, Stack } from 'react-bootstrap';
-import { ArrowLeft, ArrowRight, Calendar, CalendarDate, Collection, Joystick, PlusSquare } from 'react-bootstrap-icons';
+import { ArrowLeft, ArrowRight, CalendarDate, Collection, Joystick, PlusSquare } from 'react-bootstrap-icons';
 import { useRouter } from '../Router';
 import { stateColours } from '../constants/colours';
 

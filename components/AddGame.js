@@ -1,8 +1,8 @@
 import { search } from '../services/database';
 import Button from 'react-bootstrap/Button';
 import { useEffect, useState } from 'react';
-import { useBacklog } from '../BacklogProvider';
-import Header from '../components/Header';
+import { useBacklog } from '../pages/BacklogProvider';
+import Header from './Header';
 import { useRouter } from '../Router';
 import { Accordion, Container, Form, InputGroup, Table } from 'react-bootstrap';
 import regions from '../constants/regions';
