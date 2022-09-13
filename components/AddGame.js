@@ -93,6 +93,6 @@ const buildGame = (game, release) => {
         genres: game.genres.map(g => g.name),
         igdbRating: Math.round(game.rating),
         igdbRatingCount: game.rating_count,
-        isCoop: game.game_modes.some(x => x.name === 'Co-operative')
+        isCoop: game.game_modes?.some(x => x.name === 'Co-operative')
     }
 }
