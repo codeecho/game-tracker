@@ -3,7 +3,7 @@ import { Badge, Button, Container, Modal, Table } from "react-bootstrap";
 import { PencilFill, Trash } from "react-bootstrap-icons";
 import { useBacklog } from "../pages/BacklogProvider";
 import Header from "./Header";
-import { ABANDONED } from "../constants/states";
+import { ABANDONED, COMPLETED } from "../constants/states";
 import { useRouter } from "../Router";
 
 export default function Game(){
@@ -11,7 +11,7 @@ export default function Game(){
     const { selectedGame, showEditGameDetails, goBackToBacklog } = useRouter();
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-    const { name, status, platform, releaseYear, genres, igdbRating, igdbRatingCount, isCoop, rating, howLongToBeat, notes, reason } = selectedGame;
+    const { name, status, platform, releaseYear, genres, igdbRating, igdbRatingCount, abandonedDate, completedDate, isCoop, rating, howLongToBeat, notes, reason } = selectedGame;
 
     const { remove } = useBacklog();
 
@@ -47,7 +47,7 @@ export default function Game(){
                         </tr>
                         <tr>
                             <th>Avg *</th>
-                            <td>{igdbRating}{'   '}<Badge>{igdbRatingCount} ratings</Badge></td>
+                            <td>{igdbRating}&nbsp;&nbsp;&nbsp;&nbsp;<Badge>{igdbRatingCount} ratings</Badge></td>
                         </tr>
                         <tr>
                             <th>Coop</th>
@@ -55,19 +55,27 @@ export default function Game(){
                         </tr>
                         <tr>
                             <th>HLtB</th>
-                            <td>{howLongToBeat}</td>
+                            <td>{howLongToBeat || 'N/A'}</td>
                         </tr>
                         <tr>
                             <th>Status</th>
                             <td>{status}</td>
                         </tr>
                         { status === ABANDONED && <tr>
+                            <th>Abandoned</th>
+                            <td>{abandonedDate}</td>
+                        </tr> }
+                        { status === COMPLETED && <tr>
+                            <th>Completed</th>
+                            <td>{completedDate}</td>
+                        </tr> }
+                        { status === ABANDONED && <tr>
                             <th>Reason</th>
                             <td>{reason}</td>
                         </tr> }
                         <tr>
                             <th>Rating</th>
-                            <td>{rating}</td>
+                            <td>{rating || 'N/A'}</td>
                         </tr>
                         <tr>
                             <th>Notes</th>

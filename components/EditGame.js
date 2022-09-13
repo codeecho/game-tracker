@@ -3,7 +3,7 @@ import { Button, Container, Form, Table } from "react-bootstrap";
 import { useBacklog } from "../pages/BacklogProvider";
 import Header from "./Header";
 import reasons from "../constants/reasons";
-import states, { ABANDONED } from "../constants/states";
+import states, { ABANDONED, COMPLETED } from "../constants/states";
 import { useRouter } from "../Router";
 
 export default function EditGame(){
@@ -24,8 +24,15 @@ export default function EditGame(){
     };
 
     const saveChanges = () => {
-        update(gameData);
-        showGameDetails(gameData);
+        const { status, reason, date } = gameData;
+        const game = {
+            ...gameData,
+            reason: status === ABANDONED ? reason : undefined,
+            completedDate: status === COMPLETED ? date : undefined,
+            abandonedDate: status === ABANDONED ? date : undefined
+        }
+        update(game);
+        showGameDetails(game);
     }
 
     return (
@@ -50,8 +57,15 @@ export default function EditGame(){
                             <th>Reason</th>
                             <td>
                                 <Form.Select value={reason} size="sm" onChange={({ target : { value }}) => changeGameData('reason', value)}>
+                                    <option value=""></option>
                                     {reasons.map(x => <option value={x}>{x}</option>)}
                                 </Form.Select>
+                            </td>
+                        </tr> }
+                        { [COMPLETED, ABANDONED].includes(status) && <tr>
+                            <th>Date</th>
+                            <td>
+                                <Form.Control type="input" value={howLongToBeat} onChange={({ target: { value } }) => changeGameData('date', value)} />
                             </td>
                         </tr> }
                         <tr>

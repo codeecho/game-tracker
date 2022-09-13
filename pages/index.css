@@ -34,3 +34,10 @@ body {
     padding-top: 5px;
     padding-bottom: 5px;
 }
+
+h6 {
+    text-transform: uppercase;
+    margin-top:10px;
+    margin-bottom:10px;
+    text-align: center;
+}
