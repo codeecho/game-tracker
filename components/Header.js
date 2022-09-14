@@ -8,12 +8,12 @@ import { Stack } from 'react-bootstrap';
 export default function Header(props){
   const { title, showBackLink, children } = props;
 
-  const { goBackToBacklog } = useRouter();
+  const { goBack } = useRouter();
 
   return (
     <Navbar bg="primary" expand={false} variant="dark" collapseOnSelect={true}>
       <Container>
-        <Navbar.Brand>{ showBackLink && <ArrowLeft onClick={() => goBackToBacklog()}/> } {restrictTitle(title)}</Navbar.Brand>
+        <Navbar.Brand>{ showBackLink && <ArrowLeft onClick={() => goBack()}/> } {restrictTitle(title)}</Navbar.Brand>
           <Stack direction='horizontal' gap={3} className="ms-auto">
             { children }
           </Stack>

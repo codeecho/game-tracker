@@ -3,26 +3,30 @@ import { useBacklog } from '../pages/BacklogProvider';
 import Carousel from 'react-bootstrap/Carousel';
 import Header from './Header';
 import states, { ABANDONED, COMPLETED } from '../constants/states';
-import { Badge, Card, Col, Container, Row, Stack } from 'react-bootstrap';
-import { ArrowLeft, ArrowRight, CalendarDate, Collection, Joystick, PlusSquare } from 'react-bootstrap-icons';
+import { Badge, Card, Col, Container, Dropdown, DropdownButton, Row, Stack } from 'react-bootstrap';
+import { ArrowLeft, ArrowRight, CalendarDate, Collection, Joystick, Justify, LayoutThreeColumns, MenuUp, PlusSquare, Search } from 'react-bootstrap-icons';
 import { useRouter } from '../Router';
 import { stateColours } from '../constants/colours';
 import { getPlatform } from '../constants/platforms';
+import GameCard from './GameCard';
 
 export default function Backlog() {
     const { backlog } = useBacklog();
 
-    const { selectedState, setSelectedState, showGameDetails, showAddGame } = useRouter();
+    const { selectedState, setSelectedState, showAddGame, showSearch } = useRouter();
 
     const activeStateIndex = states.indexOf(selectedState);
 
     return (
         <div>
             <Header title={selectedState}>
-                {/* <Search/> */}
+                <Search onClick={() => showSearch()}/>
                 <PlusSquare onClick={() => showAddGame()}/>
             </Header>
             <Container className='mainContainer'>
+                <DropdownButton drop="up" title={<Justify/>} style={{ position: 'fixed', bottom: '10px', right: '10px', zIndex: 9999 }}>
+                    {states.map((state, index) => (<Dropdown.Item key={index} onClick={() => setSelectedState(state)}>{state}</Dropdown.Item>))}
+                </DropdownButton>
                 <Carousel className="mt-1" controls={false} interval={null} wrap={false} indicators={false} activeIndex={activeStateIndex} onSelect={index => setSelectedState(states[index])}>
                     {states.map((state, index) => {
 
@@ -52,32 +56,7 @@ export default function Backlog() {
                                     return <div>
                                         <h6>{platform} <Badge bg={stateColours[state]}>{platformGames.length}</Badge></h6>
                                         { platformGames.map(game => (
-                                            <div key={game.id}>
-                                                <Card className="text-center mb-1" border={stateColours[state]} onClick={() => showGameDetails(game)}>
-                                                    <Card.Body>
-                                                        <Card.Title>
-                                                            <Row>
-                                                                <Col>
-                                                                    <Badge style={{float: 'left'}} bg={stateColours[state]}>{game.status === ABANDONED ? game.reason : game.status === COMPLETED ? game.completedDate : game.howLongToBeat}</Badge>
-                                                                </Col>
-                                                                <Col xs={7}>
-                                                                    <span>{game.name}</span>
-                                                                </Col>
-                                                                <Col>
-                                                                    <Badge style={{float: 'right'}} bg={stateColours[state]}>{game.rating}</Badge>
-                                                                </Col>
-                                                            </Row>
-                                                        </Card.Title>
-                                                        <Card.Text>
-                                                            <Row>
-                                                                <Col className="card-icon"><Joystick size={20}/><span>{platform}</span></Col>
-                                                                <Col className="card-icon" style={{ borderLeft: '1px solid gray', borderRight: '1px solid gray'}}><CalendarDate size={20} /><span>{game.releaseYear}</span></Col>
-                                                                <Col className="card-icon"><Collection size={20} /><span>{restrictGameProperty(game.genres[0])}</span></Col>
-                                                            </Row>
-                                                        </Card.Text>
-                                                    </Card.Body>
-                                                </Card>
-                                            </div>
+                                            <GameCard key={game.id} game={game} />
                                         ))}
                                     </div>
                                 })}
@@ -93,7 +72,3 @@ export default function Backlog() {
     
 }
 
-const restrictGameProperty = property => {
-    if(property.length < 11) return property;
-    return property.substring(0, 11) + '...';
-}

@@ -16,7 +16,6 @@ export default function Router({ children }) {
     const [isEditGameVisible, setIsEditGameVisible] = useState(false);
 
     const showGameDetails = (game) => {
-        hideSearch();
         hideAddGame();
         setIsEditGameVisible(false);
         setSelectedGame(game);
@@ -24,7 +23,6 @@ export default function Router({ children }) {
     }
 
     const showEditGameDetails = () => {
-        console.log('edit');
         setIsEditGameVisible(true);
     }
 
@@ -39,7 +37,10 @@ export default function Router({ children }) {
 
     const hideAddGame = () => setIsAddGameVisible(false);
 
-    const showSearch = () => setIsSearchVisible(true);
+    const showSearch = () => {
+        setIsSearchVisible(true);
+        window.history.pushState('', '', '#' + Math.random());
+    }
 
     const hideSearch = () => setIsSearchVisible(false);
 
@@ -50,8 +51,16 @@ export default function Router({ children }) {
         setIsEditGameVisible(false);
     }
 
+    const goBack = () => {
+        if(isSearchVisible && selectedGame){
+            setSelectedGame(null);
+        } else {
+            goBackToBacklog();
+        }
+    }
+
     return (
-        <routerContext.Provider value={{ selectedGame, selectedState, isSearchVisible, isEditGameVisible, showEditGameDetails, goBackToBacklog, showGameDetails, setSelectedState, isAddGameVisible, showAddGame, hideAddGame, showSearch, hideSearch }}>
+        <routerContext.Provider value={{ selectedGame, goBack, selectedState, isSearchVisible, isEditGameVisible, showEditGameDetails, goBackToBacklog, showGameDetails, setSelectedState, isAddGameVisible, showAddGame, hideAddGame, showSearch, hideSearch }}>
             {children}
         </routerContext.Provider>
     )
