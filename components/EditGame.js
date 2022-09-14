@@ -14,7 +14,7 @@ export default function EditGame(){
 
     const [gameData, setGameData] = useState(selectedGame);
 
-    const { name, status, rating, howLongToBeat, notes, reason, progress } = gameData;
+    const { name, status, rating, howLongToBeat, notes, reason, progress, isCoop } = gameData;
 
     const changeGameData = (prop, value) => {
         setGameData({
@@ -41,6 +41,16 @@ export default function EditGame(){
             <Container className="mainContainer">
                 <Table striped size="sm">
                     <tbody>
+                        <tr>
+                            <th>Coop</th>
+                            <td>
+                                <Form.Check 
+                                    id="isCoop"
+                                    checked={isCoop}
+                                    onChange={({ target: { checked }}) => changeGameData('isCoop', checked)}
+                                />
+                            </td>
+                        </tr>
                         <tr>
                             <th>How Long To Beat</th>
                             <td><Form.Control type="input" value={howLongToBeat} onChange={({ target: { value } }) => changeGameData('howLongToBeat', value)} /></td>

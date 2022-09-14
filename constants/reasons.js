@@ -3,7 +3,9 @@ const reasons = [
     'Too Bad',
     'Too Long',
     'Too Hard',
-    'Lost Interest'
+    'Lost Interest',
+    'Sold',
+    'Lost'
 ];
 
 export default reasons;

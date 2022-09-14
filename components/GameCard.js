@@ -5,7 +5,7 @@ import { getPlatform } from "../constants/platforms";
 import { ABANDONED, COMPLETED } from "../constants/states";
 import { useRouter } from "../Router";
 
-export default function GameCard({ game, showStatus }) {
+export default function GameCard({ game, showStatus, ratingProperty = 'rating' }) {
     const { showGameDetails } = useRouter();
 
     return (
@@ -20,7 +20,7 @@ export default function GameCard({ game, showStatus }) {
                             <Badge style={{float: 'left'}} bg={stateColours[game.status]}>{showStatus ? game.status : game.status === ABANDONED ? game.reason : game.status === COMPLETED ? game.completedDate : game.howLongToBeat}</Badge>
                         </Col>
                         <Col>
-                            <Badge style={{float: 'right'}} bg={stateColours[game.status]}>{game.rating}</Badge>
+                            <Badge style={{float: 'right'}} bg={stateColours[game.status]}>{game[ratingProperty]}</Badge>
                         </Col>
                     </Row>
                 </Card.Title>
@@ -40,6 +40,6 @@ export default function GameCard({ game, showStatus }) {
 }
 
 const restrictGameProperty = property => {
-    if(property.length < 11) return property;
+    if(!property || property.length < 11) return property;
     return property.substring(0, 11) + '...';
 }

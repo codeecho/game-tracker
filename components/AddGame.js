@@ -90,7 +90,7 @@ const buildGame = (game, release) => {
         platform: release.platform.abbreviation,
         releaseYear: release.y,
         region: regions[release.region],
-        genres: game.genres.map(g => g.name),
+        genres: game.genres ? game.genres.map(g => g.name) : [],
         igdbRating: Math.round(game.rating),
         igdbRatingCount: game.rating_count,
         isCoop: game.game_modes?.some(x => x.name === 'Co-operative')
