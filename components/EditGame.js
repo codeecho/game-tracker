@@ -14,7 +14,7 @@ export default function EditGame(){
 
     const [gameData, setGameData] = useState(selectedGame);
 
-    const { name, status, rating, howLongToBeat, notes, reason } = gameData;
+    const { name, status, rating, howLongToBeat, notes, reason, progress } = gameData;
 
     const changeGameData = (prop, value) => {
         setGameData({
@@ -71,6 +71,10 @@ export default function EditGame(){
                         <tr>
                             <th>Rating</th>
                             <td><Form.Control type="number" value={rating} onChange={({ target: { value } }) => changeGameData('rating', value)} /></td>
+                        </tr>
+                        <tr>
+                            <th>Progress</th>
+                            <td><Form.Control type="number" value={progress} onChange={({ target: { value } }) => changeGameData('progress', value)} /></td>
                         </tr>
                         <tr>
                             <th>Notes</th>

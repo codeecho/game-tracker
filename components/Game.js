@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Badge, Button, Container, Modal, Table } from "react-bootstrap";
+import { Badge, Button, Container, Modal, ProgressBar, Table } from "react-bootstrap";
 import { PencilFill, Trash } from "react-bootstrap-icons";
 import { useBacklog } from "../pages/BacklogProvider";
 import Header from "./Header";
@@ -11,7 +11,7 @@ export default function Game(){
     const { selectedGame, showEditGameDetails, goBackToBacklog } = useRouter();
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-    const { name, status, platform, releaseYear, genres, igdbRating, igdbRatingCount, abandonedDate, completedDate, isCoop, rating, howLongToBeat, notes, reason } = selectedGame;
+    const { name, status, platform, releaseYear, genres, igdbRating, progress, igdbRatingCount, abandonedDate, completedDate, isCoop, rating, howLongToBeat, notes, reason } = selectedGame;
 
     const { remove } = useBacklog();
 
@@ -73,6 +73,10 @@ export default function Game(){
                             <th>Reason</th>
                             <td>{reason}</td>
                         </tr> }
+                        <tr>
+                            <th>Progress</th>
+                            <td>{progress ? <ProgressBar now={progress} label={`${progress}%`} /> : 'N/A'}</td>
+                        </tr>
                         <tr>
                             <th>Rating</th>
                             <td>{rating || 'N/A'}</td>

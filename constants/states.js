@@ -4,6 +4,7 @@ export const BACKLOG = 'Backlog';
 export const NEXT_UP = 'Next Up';
 export const PLAYING = 'Playing';
 export const COMPLETED = 'Completed';
+export const SHELVED = 'Shelved';
 export const ABANDONED = 'Abandoned';
 export const OTHER = 'Other';
 
@@ -13,6 +14,7 @@ const states = [
     BACKLOG,
     PLAYING,
     COMPLETED,
+    SHELVED,
     ABANDONED,
     OTHER
 ];
