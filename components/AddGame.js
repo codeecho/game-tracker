@@ -6,6 +6,7 @@ import Header from './Header';
 import { useRouter } from '../Router';
 import { Accordion, Container, Form, InputGroup, Table } from 'react-bootstrap';
 import regions from '../constants/regions';
+import { getPlatform } from '../constants/platforms';
 
 export default function AddGame(){
     const [searchString, setSearchString] = useState('');
@@ -87,7 +88,7 @@ const buildGame = (game, release) => {
     return {
         id: game.id,
         name: game.name,
-        platform: release.platform.abbreviation,
+        platform: getPlatform(release.platform.abbreviation),
         releaseYear: release.y,
         region: regions[release.region],
         genres: game.genres ? game.genres.map(g => g.name) : [],

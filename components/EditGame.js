@@ -14,7 +14,7 @@ export default function EditGame(){
 
     const [gameData, setGameData] = useState(selectedGame);
 
-    const { name, status, rating, howLongToBeat, notes, reason, progress, isCoop } = gameData;
+    const { name, status, rating, howLongToBeat, notes, reason, progress, isCoop, completedDate, abandonedDate } = gameData;
 
     const changeGameData = (prop, value) => {
         setGameData({
@@ -75,7 +75,7 @@ export default function EditGame(){
                         { [COMPLETED, ABANDONED].includes(status) && <tr>
                             <th>Date</th>
                             <td>
-                                <Form.Control type="input" value={howLongToBeat} onChange={({ target: { value } }) => changeGameData('date', value)} />
+                                <Form.Control type="input" value={ status === COMPLETED ? completedDate : abandonedDate } onChange={({ target: { value } }) => changeGameData('date', value)} />
                             </td>
                         </tr> }
                         <tr>
