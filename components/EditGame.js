@@ -12,9 +12,12 @@ export default function EditGame(){
 
     const { update } = useBacklog();
 
-    const [gameData, setGameData] = useState(selectedGame);
+    const [gameData, setGameData] = useState({
+        ...selectedGame,
+        date: selectedGame.status === COMPLETED ? selectedGame.completedDate : selectedGame.abandonedDate
+    });
 
-    const { name, status, rating, howLongToBeat, notes, reason, progress, isCoop, completedDate, abandonedDate } = gameData;
+    const { name, status, rating, howLongToBeat, notes, reason, progress, isCoop, date } = gameData;
 
     const changeGameData = (prop, value) => {
         setGameData({
@@ -75,7 +78,7 @@ export default function EditGame(){
                         { [COMPLETED, ABANDONED].includes(status) && <tr>
                             <th>Date</th>
                             <td>
-                                <Form.Control type="input" value={ status === COMPLETED ? completedDate : abandonedDate } onChange={({ target: { value } }) => changeGameData('date', value)} />
+                                <Form.Control type="input" value={ date } onChange={({ target: { value } }) => changeGameData('date', value)} />
                             </td>
                         </tr> }
                         <tr>

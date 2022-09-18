@@ -26,7 +26,7 @@ export default function GameCard({ game, showStatus, ratingProperty = 'rating' }
                 </Card.Title>
                 <Card.Text>
                     <Row>
-                        { game.progress || game.status === COMPLETED && <ProgressBar className="mb-3" now={game.status === COMPLETED ? 100 : game.progress} label={`${game.status === COMPLETED ? '100' : game.progress}%`} /> }
+                        { (game.progress || game.status === COMPLETED) && <ProgressBar className="mb-3" now={game.status === COMPLETED ? 100 : game.progress} label={`${game.status === COMPLETED ? '100' : game.progress}%`} /> }
                     </Row>
                     <Row>
                         <Col className="card-icon">{ game.isCoop && <div style={{ paddingLeft: '20%', width: '50%', float: 'left' }}><Joystick size={20}/></div> }<div style={{ paddingRight: game.isCoop ? '20%' : '0px', width: game.isCoop ? '50%' : '100%', float: 'left'}}><Joystick size={20}/></div><span>{getPlatform(game.platform)}</span></Col>
