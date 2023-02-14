@@ -4,14 +4,14 @@ import Carousel from 'react-bootstrap/Carousel';
 import Header from './Header';
 import states, { ABANDONED, BACKLOG, COMPLETED } from '../constants/states';
 import { Badge, Card, Col, Container, Dropdown, DropdownButton, Row, Stack } from 'react-bootstrap';
-import { ArrowLeft, ArrowRight, CalendarDate, Collection, Joystick, Justify, LayoutThreeColumns, MenuUp, PlusSquare, Search } from 'react-bootstrap-icons';
+import { ArrowDownUp, ArrowLeft, ArrowRight, CalendarDate, Collection, Joystick, Justify, LayoutThreeColumns, MenuUp, PlusSquare, Search } from 'react-bootstrap-icons';
 import { useRouter } from '../Router';
 import { stateColours } from '../constants/colours';
 import { getPlatform } from '../constants/platforms';
 import GameCard from './GameCard';
 
 export default function Backlog() {
-  const { backlog } = useBacklog();
+  const { backlog, sync } = useBacklog();
 
   const { selectedState, setSelectedState, showAddGame, showSearch } = useRouter();
 
@@ -20,6 +20,7 @@ export default function Backlog() {
   return (
     <div>
       <Header title={selectedState}>
+        <ArrowDownUp onClick={() => sync()} />
         <Search onClick={() => showSearch()} />
         <PlusSquare onClick={() => showAddGame()} />
       </Header>

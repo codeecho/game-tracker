@@ -6,8 +6,9 @@
     "start": "next start"
   },
   "dependencies": {
+    "@datalanguage/datagraphs-client": "^1.0.1",
     "axios": "^0.27.2",
-    "next": "latest",
+    "next": "12",
     "react": "17.0.2",
     "react-bootstrap": "^2.5.0",
     "react-bootstrap-icons": "^1.8.4",

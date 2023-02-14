@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from 'react';
+import { sync as syncBacklog } from '../clients/api';
 
 const savedState = (() => {
   if (typeof window === 'undefined') return;
@@ -42,5 +43,9 @@ export default function BacklogProvider({ children }) {
 
   const reset = () => updateState(newState);
 
-  return <backlogContext.Provider value={{ backlog: state, get, add, update, remove, reset }}>{children}</backlogContext.Provider>;
+  const sync = async () => {
+    await syncBacklog(state);
+  };
+
+  return <backlogContext.Provider value={{ backlog: state, get, add, update, remove, reset, sync }}>{children}</backlogContext.Provider>;
 }
