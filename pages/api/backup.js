@@ -11,7 +11,7 @@ const handler = async (req, res) => {
         return res;
     });
     console.log(games);
-    // await datagraphs.concepts.upsertBulk('urn:game-backlog:games', games);
+    await datagraphs.concepts.upsertBulk('urn:game-backlog:games', games);
     res.status(200).send();
 };
 
