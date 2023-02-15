@@ -27,11 +27,24 @@ export default function EditGame() {
 
   const saveChanges = () => {
     const { status, reason, date, nextUp } = gameData;
+    const completedDate = status === COMPLETED ? date : undefined;
+    let completedYear;
+    if(completedDate){
+        if(completedDate.match(/^\d\d\d\d$/)) completedYear = completedDate;
+        if(completedDate.match(/^\d\d\/\d\d\d\d$/)) completedYear = completedDate.substring(3);
+        if(completedDate.match(/^\d\d\/\d\d\/\d\d$/)){
+            const year = completedDate.substring(6);
+            if(year < 50) completedYear = `20${year}`;
+            else completedYear = `19${year}`;
+        };
+        if(!completedYear) throw new Error('Invalid date format');
+    }
     const game = {
       ...gameData,
       nextUp: status === BACKLOG ? nextUp : undefined,
       reason: status === ABANDONED ? reason : undefined,
-      completedDate: status === COMPLETED ? date : undefined,
+      completedDate,
+      completedYear,
       abandonedDate: status === ABANDONED ? date : undefined,
     };
     update(game);

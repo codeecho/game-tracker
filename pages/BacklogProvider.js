@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from 'react';
-import { sync as syncBacklog } from '../clients/api';
+import { backup as backupBacklog, restore as restoreBacklog } from '../clients/api';
 
 const savedState = (() => {
   if (typeof window === 'undefined') return;
@@ -43,9 +43,19 @@ export default function BacklogProvider({ children }) {
 
   const reset = () => updateState(newState);
 
-  const sync = async () => {
-    await syncBacklog(state);
+  const backup = async () => {
+    const yes = confirm('Are you sure you want to backup?');
+    if(yes) await backupBacklog(state);
   };
 
-  return <backlogContext.Provider value={{ backlog: state, get, add, update, remove, reset, sync }}>{children}</backlogContext.Provider>;
+  const restore = async () => {
+    let yes = confirm('Are you sure you want to restore?');
+    if(yes) { 
+      const games = await restoreBacklog();
+      yes = confirm(`This will replace ${state.games.length} games with ${games.length} games. Continue?`);
+      if(yes) updateState({ ...state, games });
+    }
+  };
+
+  return <backlogContext.Provider value={{ backlog: state, get, add, update, remove, reset, backup, restore }}>{children}</backlogContext.Provider>;
 }

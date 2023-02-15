@@ -1,10 +1,34 @@
 const platforms = {
+    'C64': 'C64',
+    'NES': 'NES',
+    'SNES': 'SNES',
     'SFAM': 'SNES',
+    'Mega Drive': 'Mega Drive',
     'Genesis': 'Mega Drive',
+    'Genesis/MegaDrive': 'Mega Drive',
+    'segacd': 'Sega CD',
+    'neogeoaes': 'Neo Geo',
+    'PS1': 'PS1',
+    'Saturn': 'Saturn',
+    'N64': 'N64',
+    'GBA': 'GBA',
+    'PS2': 'PS2',
+    'XBOX': 'XBox',
+    'Dreamcast': 'Dreamcast',
     'DC': 'Dreamcast',
+    'Gamecube': 'Gamecube',
     'NGC': 'Gamecube',
+    'PSP': 'PSP',
+    'X360': 'X360',
+    'PS3': 'PS3',
+    'Wii': 'Wii',
+    'Switch': 'Switch',
     'Linux': 'PC',
-    'DOS': 'PC'
+    'DOS': 'PC',
+    'PC': 'PC',
+    'Arcade': 'Arcade',
+    'browser': 'Browser',
+    'Android': 'Android'
 };
 
 export const getPlatform = platform => platforms[platform] || platform;

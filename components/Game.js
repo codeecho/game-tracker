@@ -15,6 +15,8 @@ export default function Game(){
 
     const { remove } = useBacklog();
 
+    console.log(selectedGame);
+
     const deleteGame = () => {
         remove(selectedGame);
         goBackToBacklog();
@@ -43,7 +45,7 @@ export default function Game(){
                         </tr>
                         <tr>
                             <th>Genre</th>
-                            <td>{genres.join(', ')}</td>
+                            <td>{(genres || []).join(', ')}</td>
                         </tr>
                         <tr>
                             <th>Avg *</th>

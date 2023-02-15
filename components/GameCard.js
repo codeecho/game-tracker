@@ -31,7 +31,7 @@ export default function GameCard({ game, showStatus, ratingProperty = 'rating' }
                     <Row>
                         <Col className="card-icon">{ game.isCoop && <div style={{ paddingLeft: '20%', width: '50%', float: 'left' }}><Joystick size={20}/></div> }<div style={{ paddingRight: game.isCoop ? '20%' : '0px', width: game.isCoop ? '50%' : '100%', float: 'left'}}><Joystick size={20}/></div><span>{getPlatform(game.platform)}</span></Col>
                         <Col className="card-icon" style={{ borderLeft: '1px solid gray', borderRight: '1px solid gray'}}><CalendarDate size={20} /><span>{game.releaseYear}</span></Col>
-                        <Col className="card-icon"><Collection size={20} /><span>{restrictGameProperty(game.genres[0])}</span></Col>
+                        <Col className="card-icon"><Collection size={20} /><span>{restrictGameProperty((game.genres || [])[0])}</span></Col>
                     </Row>
                 </Card.Text>
             </Card.Body>
