@@ -4,7 +4,7 @@ const handler = async (req, res) => {
     const response = await datagraphs.concepts.search({ dataset: 'urn:game-backlog:games', pageSize: 1000 });
     const games = response.results.map(x => ({
         ...x,
-        id: x.id.split(':').pop()
+        id: x.id.split(':').pop() * 1
     }));
     res.status(200).json(games);
 };

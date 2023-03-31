@@ -46,6 +46,7 @@ export default function BacklogProvider({ children }) {
   const backup = async () => {
     const yes = confirm('Are you sure you want to backup?');
     if(yes) await backupBacklog(state);
+    alert('Backup completed');
   };
 
   const restore = async () => {
@@ -54,6 +55,7 @@ export default function BacklogProvider({ children }) {
       const games = await restoreBacklog();
       yes = confirm(`This will replace ${state.games.length} games with ${games.length} games. Continue?`);
       if(yes) updateState({ ...state, games });
+      alert('Restore completed');
     }
   };
 
