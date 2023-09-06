@@ -5,6 +5,7 @@ import Header from './Header';
 import reasons from '../constants/reasons';
 import states, { ABANDONED, BACKLOG, COMPLETED } from '../constants/states';
 import { useRouter } from '../Router';
+import ownershipTypes from '../constants/ownershipTypes.js';
 
 export default function EditGame() {
   const { selectedGame, showGameDetails } = useRouter();
@@ -16,7 +17,7 @@ export default function EditGame() {
     date: selectedGame.status === COMPLETED ? selectedGame.completedDate : selectedGame.abandonedDate,
   });
 
-  const { name, status, rating, howLongToBeat, notes, reason, progress, isCoop, date, nextUp } = gameData;
+  const { name, status, rating, howLongToBeat, notes, reason, progress, isCoop, date, nextUp, value = 0, ownedAs } = gameData;
 
   const changeGameData = (prop, value) => {
     setGameData({
@@ -29,15 +30,15 @@ export default function EditGame() {
     const { status, reason, date, nextUp } = gameData;
     const completedDate = status === COMPLETED ? date : undefined;
     let completedYear;
-    if(completedDate){
-        if(completedDate.match(/^\d\d\d\d$/)) completedYear = completedDate;
-        if(completedDate.match(/^\d\d\/\d\d\d\d$/)) completedYear = completedDate.substring(3);
-        if(completedDate.match(/^\d\d\/\d\d\/\d\d$/)){
-            const year = completedDate.substring(6);
-            if(year < 50) completedYear = `20${year}`;
-            else completedYear = `19${year}`;
-        };
-        if(!completedYear) throw new Error('Invalid date format');
+    if (completedDate) {
+      if (completedDate.match(/^\d\d\d\d$/)) completedYear = completedDate;
+      if (completedDate.match(/^\d\d\/\d\d\d\d$/)) completedYear = completedDate.substring(3);
+      if (completedDate.match(/^\d\d\/\d\d\/\d\d$/)) {
+        const year = completedDate.substring(6);
+        if (year < 50) completedYear = `20${year}`;
+        else completedYear = `19${year}`;
+      };
+      if (!completedYear) throw new Error('Invalid date format');
     }
     const game = {
       ...gameData,
@@ -58,6 +59,17 @@ export default function EditGame() {
         <Table striped size="sm">
           <tbody>
             <tr>
+              <th>Owned As</th>
+              <td>
+                <Form.Select value={ownedAs} size="sm" onChange={({ target: { value } }) => changeGameData('ownedAs', value)}>
+                  <option value=""></option>
+                  {ownershipTypes.map((x) => (
+                    <option value={x}>{x}</option>
+                  ))}
+                </Form.Select>
+              </td>
+            </tr>
+            <tr>
               <th>Coop</th>
               <td>
                 <Form.Check id="isCoop" checked={isCoop} onChange={({ target: { checked } }) => changeGameData('isCoop', checked)} />
@@ -67,6 +79,12 @@ export default function EditGame() {
               <th>How Long To Beat</th>
               <td>
                 <Form.Control type="input" value={howLongToBeat} onChange={({ target: { value } }) => changeGameData('howLongToBeat', value)} />
+              </td>
+            </tr>
+            <tr>
+              <th>Value (£)</th>
+              <td>
+                <Form.Control type="number" value={value} onChange={({ target: { value } }) => changeGameData('value', value)} />
               </td>
             </tr>
             <tr>

@@ -2,20 +2,65 @@ import Button from 'react-bootstrap/Button';
 import { useBacklog } from '../pages/BacklogProvider';
 import Carousel from 'react-bootstrap/Carousel';
 import Header from './Header';
-import states, { ABANDONED, BACKLOG, COMPLETED } from '../constants/states';
+import states from '../constants/states';
 import { Badge, Card, Col, Container, Dropdown, DropdownButton, Row, Stack } from 'react-bootstrap';
-import { ArrowDownCircleFill, ArrowDownUp, ArrowLeft, ArrowRight, ArrowUpCircle, ArrowUpCircleFill, CalendarDate, Collection, Joystick, Justify, LayoutThreeColumns, MenuUp, PlusSquare, Search } from 'react-bootstrap-icons';
+import { ArrowDownCircleFill, Code, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, ArrowUpCircle, ArrowUpCircleFill, CalendarDate, Collection, Joystick, Justify, LayoutThreeColumns, MenuUp, PlusSquare, Search, SortUp, DiscFill } from 'react-bootstrap-icons';
 import { useRouter } from '../Router';
 import { stateColours } from '../constants/colours';
 import { getPlatform } from '../constants/platforms';
 import GameCard from './GameCard';
+import { useState } from 'react';
+import ownershipTypes from '../constants/ownershipTypes.js';
+
+const sortOptions = [{
+  label: 'Platform',
+  property: 'platform',
+  direction: 'asc',
+  grouped: true
+}, {
+  label: 'Release Year',
+  property: 'releaseYear',
+  direction: 'asc',
+  grouped: true
+}, {
+  label: 'Progress',
+  property: 'progress',
+  direction: 'desc',
+  grouped: false
+}, {
+  label: 'Completed Date',
+  property: 'completedDate',
+  direction: 'desc',
+  grouped: false
+}, {
+  label: 'Completed Year',
+  property: 'completedYear',
+  direction: 'desc',
+  grouped: true
+}, {
+  label: 'Rating',
+  property: 'rating',
+  direction: 'desc',
+  grouped: false
+}, {
+  label: 'IGDB Rating',
+  property: 'igdbRating',
+  direction: 'desc',
+  grouped: false
+}];
 
 export default function Backlog() {
+  const [sort, setSort] = useState({ label: 'Platform', property: 'platform', direction: 'asc', grouped: true });
+  const [selectedPlatform, setSelectedPlatform] = useState(null);
+  const [selectedOwnedAs, setSelectedOwnedAs] = useState(null);
+
   const { backlog, backup, restore } = useBacklog();
 
   const { selectedState, setSelectedState, showAddGame, showSearch } = useRouter();
 
   const activeStateIndex = states.indexOf(selectedState);
+
+  const platforms = [...new Set(backlog.games.filter(x => x.status === selectedState).map(x => x.platform))];
 
   return (
     <div>
@@ -26,31 +71,63 @@ export default function Backlog() {
         <PlusSquare onClick={() => showAddGame()} />
       </Header>
       <Container className="mainContainer">
-        <DropdownButton drop="up" title={<Justify />} style={{ position: 'fixed', bottom: '10px', right: '10px', zIndex: 9999 }}>
+        <DropdownButton drop="up" title={<Code />} style={{ position: 'fixed', bottom: '10px', right: '10px', zIndex: 9998 }}>
           {states.map((state, index) => (
-            <Dropdown.Item key={index} onClick={() => setSelectedState(state)}>
+            <Dropdown.Item key={index} style={{ zIndex: 9999 }} onClick={() => setSelectedState(state)}>
               {state}
             </Dropdown.Item>
           ))}
         </DropdownButton>
-        <Carousel className="mt-1" controls={false} interval={null} wrap={false} indicators={false} activeIndex={activeStateIndex} onSelect={(index) => setSelectedState(states[index])}>
+        <DropdownButton drop="up" title={<SortUp />} style={{ position: 'fixed', bottom: '60px', right: '10px', zIndex: 9998 }}>
+          {sortOptions.map(({ label, property, direction, grouped }, index) => (
+            <Dropdown.Item key={index} style={{ zIndex: 9999 }} onClick={() => { setSort({ label, property, direction: sort.property === property ? getOppositeSortDirection(sort.direction) : direction, grouped }) }}>
+              {getSortIcon(sort.property === property && sort.direction == direction ? getOppositeSortDirection(direction) : direction)} {label}
+            </Dropdown.Item>
+          ))}
+        </DropdownButton>
+        <DropdownButton drop="up" title={<Joystick />} style={{ position: 'fixed', bottom: '110px', right: '10px', zIndex: 9998 }}>
+          <Dropdown.Item key="any" onClick={() => setSelectedPlatform(null)} style={{ zIndex: 9999 }}>
+            Any
+          </Dropdown.Item>
+          {platforms.map((platform, index) => (
+            <Dropdown.Item key={index} onClick={() => setSelectedPlatform(platform)} style={{ zIndex: 9999 }}>
+              {platform}
+            </Dropdown.Item>
+          ))}
+        </DropdownButton>
+        <DropdownButton drop="up" title={<DiscFill />} style={{ position: 'fixed', bottom: '160px', right: '10px', zIndex: 9998 }}>
+          <Dropdown.Item key="any" onClick={() => setSelectedOwnedAs(null)} style={{ zIndex: 9999 }}>
+            Any
+          </Dropdown.Item>
+          {ownershipTypes.map((type, index) => (
+            <Dropdown.Item key={index} onClick={() => setSelectedOwnedAs(type)} style={{ zIndex: 9999 }}>
+              {type}
+            </Dropdown.Item>
+          ))}
+        </DropdownButton>
+        <Carousel className="mt-1" touch={false} controls={false} interval={null} wrap={false} indicators={false} activeIndex={activeStateIndex} onSelect={(index) => setSelectedState(states[index])}>
           {states.map((state, index) => {
             const previousState = index > 0 ? states[index - 1] : null;
             const nextState = index < states.length - 1 ? states[index + 1] : null;
 
-            const games = backlog.games.filter((x) => x.status === state);
+            const games = backlog.games
+              .filter((x) => x.status === state)
+              .filter(x => !selectedPlatform || x.platform === selectedPlatform)
+              .filter(x => !selectedOwnedAs || x.ownedAs === selectedOwnedAs);
+            const gamesByGroup = [];
 
-            const gamesByPlatform = {};
+            if (!sort.grouped) {
+              doSort(games, sort.property, sort.direction);
+            } else {
+              games.forEach((x) => {
+                const group = x[sort.property];
+                const g = gamesByGroup.find(x => group === x.group) || { group, games: [] };
+                if (g.games.length === 0) gamesByGroup.push(g);
+                g.games.push(x);
+              });
 
-            const nextUpGames = games.filter((x) => x.nextUp);
-
-            const otherGames = games.filter((x) => !x.nextUp);
-
-            otherGames.forEach((x) => {
-              const platform = getPlatform(x.platform);
-              const g = gamesByPlatform[platform] || [];
-              gamesByPlatform[platform] = g.concat(x);
-            });
+              doSort(gamesByGroup, 'group', sort.direction);
+            }
 
             return (
               <Carousel.Item>
@@ -71,40 +148,29 @@ export default function Backlog() {
                     )}
                   </Stack>
                 </div>
-                {state === BACKLOG && nextUpGames.length > 0 && (
+                {!sort.grouped && (
                   <div>
                     <h6>
-                      Next Up <Badge bg={stateColours[state]}>{nextUpGames.length}</Badge>
+                      Ordered by {sort.label} {sort.direction == 'asc' ? <ArrowDown /> : <ArrowUp />}
                     </h6>
-                    {nextUpGames.map((game) => (
+                    {games.map((game) => (
                       <GameCard key={game.id} game={game} />
                     ))}
                   </div>
                 )}
-                {state === BACKLOG && otherGames.length > 0 && (
-                  <div>
-                    <h6>
-                      Backlog <Badge bg={stateColours[state]}>{otherGames.length}</Badge>
-                    </h6>
-                    {otherGames.map((game) => (
-                      <GameCard key={game.id} game={game} />
-                    ))}
-                  </div>
-                )}
-                {state !== BACKLOG &&
-                  Object.entries(gamesByPlatform).map(([platform, platformGames]) => {
-                    return (
-                      <div>
-                        <h6>
-                          {platform} <Badge bg={stateColours[state]}>{platformGames.length}</Badge>
-                        </h6>
-                        {platformGames.map((game) => (
-                          <GameCard key={game.id} game={game} />
-                        ))}
-                      </div>
-                    );
-                  })}
-                {}
+                {sort.grouped && gamesByGroup.map(({ group, games: groupGames }) => {
+                  return (
+                    <div>
+                      <h6>
+                        {group} <Badge bg={stateColours[state]}>{groupGames.length}</Badge>
+                      </h6>
+                      {groupGames.map((game) => (
+                        <GameCard key={game.id} game={game} />
+                      ))}
+                    </div>
+                  );
+                })}
+                { }
               </Carousel.Item>
             );
           })}
@@ -112,4 +178,20 @@ export default function Backlog() {
       </Container>
     </div>
   );
+}
+
+const doSort = (array, sort, sortDirection) => {
+  array.sort((a, b) => {
+    if (a[sort] < b[sort]) return sortDirection === 'asc' ? -1 : 1;
+    if (a[sort] > b[sort]) return sortDirection === 'asc' ? 1 : -1;
+    return 0;
+  });
+};
+
+const getOppositeSortDirection = (sortDirection) => {
+  return sortDirection === 'asc' ? 'desc' : 'asc';
+}
+
+const getSortIcon = (sortDirection) => {
+  return sortDirection === 'asc' ? <ArrowDown /> : <ArrowUp />
 }
