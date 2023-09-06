@@ -2,7 +2,7 @@ import Button from 'react-bootstrap/Button';
 import { useBacklog } from '../pages/BacklogProvider';
 import Carousel from 'react-bootstrap/Carousel';
 import Header from './Header';
-import states, { BACKLOG, COMPLETED, PLAYED, isInState } from '../constants/states';
+import states, { ALL, BACKLOG, COMPLETED, PLAYED, isInState } from '../constants/states';
 import { Badge, Card, Col, Container, Dropdown, DropdownButton, Row, Stack } from 'react-bootstrap';
 import { ArrowDownCircleFill, Code, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, ArrowUpCircle, ArrowUpCircleFill, CalendarDate, Collection, Joystick, Justify, LayoutThreeColumns, MenuUp, PlusSquare, Search, SortUp, DiscFill, XCircle, XCircleFill } from 'react-bootstrap-icons';
 import { useRouter } from '../Router';
@@ -57,7 +57,8 @@ const sortOptions = [{
 const defaultSortByState = {
   [COMPLETED]: 'completedYear',
   [PLAYED]: 'rating',
-  [BACKLOG]: 'backlogScore'
+  [BACKLOG]: 'backlogScore',
+  [ALL]: 'rating'
 };
 
 export default function Backlog() {
@@ -71,7 +72,7 @@ export default function Backlog() {
 
   const activeStateIndex = states.indexOf(selectedState);
 
-  const platforms = [...new Set(backlog.games.filter(x => x.status === selectedState).map(x => x.platform))];
+  const platforms = [...new Set(backlog.games.filter(x => isInState(x, selectedState)).map(x => x.platform))];
 
   const sort = selectedSort && (!selectedSort.status || selectedSort.status === selectedState) ? selectedSort : sortOptions.find(x => x.property === defaultSortByState[selectedState]) || sortOptions[0];
 
