@@ -1,5 +1,6 @@
 import { createContext, useContext, useState } from 'react';
 import { backup as backupBacklog, restore as restoreBacklog } from '../clients/api';
+import { WISH_LIST } from '../constants/states.js';
 
 const savedState = (() => {
   if (typeof window === 'undefined') return;
@@ -23,9 +24,9 @@ export default function BacklogProvider({ children }) {
     localStorage.setItem('backlog', JSON.stringify(state));
   };
 
-  const add = (game, status) => {
+  const add = (game) => {
     if (state.games.find((x) => x.id === game.id)) return;
-    updateState({ ...state, games: state.games.concat({ ...game, status }) });
+    updateState({ ...state, games: state.games.concat({ ...game, status: WISH_LIST }) });
   };
 
   const get = (id) => state.games.find((x) => x.id === id);
@@ -45,16 +46,16 @@ export default function BacklogProvider({ children }) {
 
   const backup = async () => {
     const yes = confirm('Are you sure you want to backup?');
-    if(yes) await backupBacklog(state);
+    if (yes) await backupBacklog(state);
     alert('Backup completed');
   };
 
   const restore = async () => {
     let yes = confirm('Are you sure you want to restore?');
-    if(yes) { 
+    if (yes) {
       const games = await restoreBacklog();
       yes = confirm(`This will replace ${state.games.length} games with ${games.length} games. Continue?`);
-      if(yes) updateState({ ...state, games });
+      if (yes) updateState({ ...state, games });
       alert('Restore completed');
     }
   };

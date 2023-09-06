@@ -2,12 +2,11 @@ import Button from 'react-bootstrap/Button';
 import { useBacklog } from '../pages/BacklogProvider';
 import Carousel from 'react-bootstrap/Carousel';
 import Header from './Header';
-import states from '../constants/states';
+import states, { BACKLOG, COMPLETED, PLAYED, isInState } from '../constants/states';
 import { Badge, Card, Col, Container, Dropdown, DropdownButton, Row, Stack } from 'react-bootstrap';
-import { ArrowDownCircleFill, Code, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, ArrowUpCircle, ArrowUpCircleFill, CalendarDate, Collection, Joystick, Justify, LayoutThreeColumns, MenuUp, PlusSquare, Search, SortUp, DiscFill } from 'react-bootstrap-icons';
+import { ArrowDownCircleFill, Code, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, ArrowUpCircle, ArrowUpCircleFill, CalendarDate, Collection, Joystick, Justify, LayoutThreeColumns, MenuUp, PlusSquare, Search, SortUp, DiscFill, XCircle, XCircleFill } from 'react-bootstrap-icons';
 import { useRouter } from '../Router';
 import { stateColours } from '../constants/colours';
-import { getPlatform } from '../constants/platforms';
 import GameCard from './GameCard';
 import { useState } from 'react';
 import ownershipTypes from '../constants/ownershipTypes.js';
@@ -47,10 +46,22 @@ const sortOptions = [{
   property: 'igdbRating',
   direction: 'desc',
   grouped: false
+}, {
+  label: 'Score',
+  property: 'backlogScore',
+  direction: 'desc',
+  grouped: false,
+  status: BACKLOG
 }];
 
+const defaultSortByState = {
+  [COMPLETED]: 'completedYear',
+  [PLAYED]: 'rating',
+  [BACKLOG]: 'backlogScore'
+};
+
 export default function Backlog() {
-  const [sort, setSort] = useState({ label: 'Platform', property: 'platform', direction: 'asc', grouped: true });
+  const [selectedSort, setSort] = useState(null);
   const [selectedPlatform, setSelectedPlatform] = useState(null);
   const [selectedOwnedAs, setSelectedOwnedAs] = useState(null);
 
@@ -62,12 +73,14 @@ export default function Backlog() {
 
   const platforms = [...new Set(backlog.games.filter(x => x.status === selectedState).map(x => x.platform))];
 
+  const sort = selectedSort && (!selectedSort.status || selectedSort.status === selectedState) ? selectedSort : sortOptions.find(x => x.property === defaultSortByState[selectedState]) || sortOptions[0];
+
   return (
     <div>
       <Header title={selectedState}>
         <ArrowDownCircleFill onClick={() => restore()} />
         <ArrowUpCircleFill onClick={() => backup()} />
-        <Search onClick={() => showSearch()} />
+        {/* <Search onClick={() => showSearch()} /> */}
         <PlusSquare onClick={() => showAddGame()} />
       </Header>
       <Container className="mainContainer">
@@ -79,7 +92,7 @@ export default function Backlog() {
           ))}
         </DropdownButton>
         <DropdownButton drop="up" title={<SortUp />} style={{ position: 'fixed', bottom: '60px', right: '10px', zIndex: 9998 }}>
-          {sortOptions.map(({ label, property, direction, grouped }, index) => (
+          {sortOptions.filter(x => !x.status || x.status === selectedState).map(({ label, property, direction, grouped }, index) => (
             <Dropdown.Item key={index} style={{ zIndex: 9999 }} onClick={() => { setSort({ label, property, direction: sort.property === property ? getOppositeSortDirection(sort.direction) : direction, grouped }) }}>
               {getSortIcon(sort.property === property && sort.direction == direction ? getOppositeSortDirection(direction) : direction)} {label}
             </Dropdown.Item>
@@ -105,13 +118,16 @@ export default function Backlog() {
             </Dropdown.Item>
           ))}
         </DropdownButton>
+        <Button style={{ position: 'fixed', bottom: '210px', right: '10px', zIndex: 9998 }} onClick={() => { setSelectedPlatform(null); setSelectedOwnedAs(null); }}>
+          <XCircleFill />
+        </Button>
         <Carousel className="mt-1" touch={false} controls={false} interval={null} wrap={false} indicators={false} activeIndex={activeStateIndex} onSelect={(index) => setSelectedState(states[index])}>
           {states.map((state, index) => {
             const previousState = index > 0 ? states[index - 1] : null;
             const nextState = index < states.length - 1 ? states[index + 1] : null;
 
             const games = backlog.games
-              .filter((x) => x.status === state)
+              .filter((x) => isInState(x, state))
               .filter(x => !selectedPlatform || x.platform === selectedPlatform)
               .filter(x => !selectedOwnedAs || x.ownedAs === selectedOwnedAs);
             const gamesByGroup = [];
@@ -154,7 +170,7 @@ export default function Backlog() {
                       Ordered by {sort.label} {sort.direction == 'asc' ? <ArrowDown /> : <ArrowUp />}
                     </h6>
                     {games.map((game) => (
-                      <GameCard key={game.id} game={game} />
+                      <GameCard key={game.id} game={game} status={state} />
                     ))}
                   </div>
                 )}
@@ -165,7 +181,7 @@ export default function Backlog() {
                         {group} <Badge bg={stateColours[state]}>{groupGames.length}</Badge>
                       </h6>
                       {groupGames.map((game) => (
-                        <GameCard key={game.id} game={game} />
+                        <GameCard key={game.id} game={game} status={state} />
                       ))}
                     </div>
                   );
@@ -182,6 +198,9 @@ export default function Backlog() {
 
 const doSort = (array, sort, sortDirection) => {
   array.sort((a, b) => {
+    if (!a[sort] && !b[sort]) return 0;
+    if (a[sort] && !b[sort]) return -1;
+    if (!a[sort] && b[sort]) return 1;
     if (a[sort] < b[sort]) return sortDirection === 'asc' ? -1 : 1;
     if (a[sort] > b[sort]) return sortDirection === 'asc' ? 1 : -1;
     return 0;

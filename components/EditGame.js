@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { Button, Container, Form, Table } from 'react-bootstrap';
 import { useBacklog } from '../pages/BacklogProvider';
 import Header from './Header';
-import reasons from '../constants/reasons';
-import states, { ABANDONED, BACKLOG, COMPLETED } from '../constants/states';
+import states from '../constants/states';
 import { useRouter } from '../Router';
 import ownershipTypes from '../constants/ownershipTypes.js';
 
@@ -14,10 +13,10 @@ export default function EditGame() {
 
   const [gameData, setGameData] = useState({
     ...selectedGame,
-    date: selectedGame.status === COMPLETED ? selectedGame.completedDate : selectedGame.abandonedDate,
+    date: selectedGame.completed ? selectedGame.completedDate : selectedGame.abandonedDate,
   });
 
-  const { name, status, rating, howLongToBeat, notes, reason, progress, isCoop, date, nextUp, value = 0, ownedAs } = gameData;
+  const { name, rating, howLongToBeat, notes, reason, progress, isCoop, date, value = 0, ownedAs, backlog, completed, played, shelved, playing, backlogScore, wishListScore } = gameData;
 
   const changeGameData = (prop, value) => {
     setGameData({
@@ -27,8 +26,8 @@ export default function EditGame() {
   };
 
   const saveChanges = () => {
-    const { status, reason, date, nextUp } = gameData;
-    const completedDate = status === COMPLETED ? date : undefined;
+    const { date, completed, played, shelved } = gameData;
+    const completedDate = completed ? date : undefined;
     let completedYear;
     if (completedDate) {
       if (completedDate.match(/^\d\d\d\d$/)) completedYear = completedDate;
@@ -42,11 +41,10 @@ export default function EditGame() {
     }
     const game = {
       ...gameData,
-      nextUp: status === BACKLOG ? nextUp : undefined,
-      reason: status === ABANDONED ? reason : undefined,
       completedDate,
       completedYear,
-      abandonedDate: status === ABANDONED ? date : undefined,
+      shelved: completed ? false : shelved,
+      played: completed || shelved || playing ? true : played,
     };
     update(game);
     showGameDetails(game);
@@ -88,37 +86,42 @@ export default function EditGame() {
               </td>
             </tr>
             <tr>
-              <th>Status</th>
+              <th>Backlog</th>
               <td>
-                <Form.Select value={status} size="sm" onChange={({ target: { value } }) => changeGameData('status', value)}>
-                  {states.map((x) => (
-                    <option value={x}>{x}</option>
-                  ))}
-                </Form.Select>
+                <Form.Check id="backlog" checked={backlog} onChange={({ target: { checked } }) => changeGameData('backlog', checked)} />
               </td>
             </tr>
-            {status === BACKLOG && (
-              <tr>
-                <th>Next Up</th>
-                <td>
-                  <Form.Check id="nextUp" checked={nextUp} onChange={({ target: { checked } }) => changeGameData('nextUp', checked)} />
-                </td>
-              </tr>
-            )}
-            {status === ABANDONED && (
-              <tr>
-                <th>Reason</th>
-                <td>
-                  <Form.Select value={reason} size="sm" onChange={({ target: { value } }) => changeGameData('reason', value)}>
-                    <option value=""></option>
-                    {reasons.map((x) => (
-                      <option value={x}>{x}</option>
-                    ))}
-                  </Form.Select>
-                </td>
-              </tr>
-            )}
-            {[COMPLETED, ABANDONED].includes(status) && (
+            {backlog && <tr>
+              <th>Backlog Score</th>
+              <td>
+                <Form.Control type="input" value={backlogScore} onChange={({ target: { value } }) => changeGameData('backlogScore', value)} />
+              </td>
+            </tr>}
+            <tr>
+              <th>Played</th>
+              <td>
+                <Form.Check id="played" checked={played} onChange={({ target: { checked } }) => changeGameData('played', checked)} />
+              </td>
+            </tr>
+            <tr>
+              <th>Playing</th>
+              <td>
+                <Form.Check id="playing" checked={playing} onChange={({ target: { checked } }) => changeGameData('playing', checked)} />
+              </td>
+            </tr>
+            <tr>
+              <th>Shelved</th>
+              <td>
+                <Form.Check id="shelved" checked={shelved} onChange={({ target: { checked } }) => changeGameData('shelved', checked)} />
+              </td>
+            </tr>
+            <tr>
+              <th>Completed</th>
+              <td>
+                <Form.Check id="completed" checked={completed} onChange={({ target: { checked } }) => changeGameData('completed', checked)} />
+              </td>
+            </tr>
+            {completed && (
               <tr>
                 <th>Date</th>
                 <td>

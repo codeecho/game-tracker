@@ -5,11 +5,13 @@ import { getPlatform } from "../constants/platforms";
 import { ABANDONED, COMPLETED, WISH_LIST } from "../constants/states";
 import { useRouter } from "../Router";
 
-export default function GameCard({ game, showStatus, ratingProperty = 'rating' }) {
+export default function GameCard({ game, status = WISH_LIST, ratingProperty = 'rating' }) {
+    const showStatus = false;
+
     const { showGameDetails } = useRouter();
 
     return (
-        <Card className="text-center mb-1" border={stateColours[game.status]} onClick={() => showGameDetails(game)}>
+        <Card className="text-center mb-1" border={stateColours[status]} onClick={() => showGameDetails(game)}>
             <Card.Body>
                 <Card.Title>
                     <Row>
@@ -17,16 +19,16 @@ export default function GameCard({ game, showStatus, ratingProperty = 'rating' }
                     </Row>
                     <Row>
                         <Col>
-                            <Badge style={{ float: 'left' }} bg={stateColours[game.status]}>{showStatus ? game.status : game.status === ABANDONED ? game.reason : game.status === COMPLETED ? game.completedDate : game.howLongToBeat}</Badge>
+                            <Badge style={{ float: 'left' }} bg={stateColours[status]}>{showStatus ? status : status === ABANDONED ? game.reason : status === COMPLETED ? game.completedDate : game.howLongToBeat}</Badge>
                         </Col>
                         <Col>
-                            <Badge style={{ float: 'right' }} bg={stateColours[game.status]}>{game.status === WISH_LIST ? `${game.value ? '£' + game.value : ''}` : game[ratingProperty]}</Badge>
+                            <Badge style={{ float: 'right' }} bg={stateColours[status]}>{status === WISH_LIST ? `${game.value ? '£' + game.value : ''}` : game[ratingProperty]}</Badge>
                         </Col>
                     </Row>
                 </Card.Title>
                 <Card.Text>
                     <Row>
-                        {(game.progress || game.status === COMPLETED) && <ProgressBar className="mb-3" now={game.status === COMPLETED ? 100 : game.progress} label={`${game.status === COMPLETED ? '100' : game.progress}%`} />}
+                        {(game.progress || status === COMPLETED) && <ProgressBar className="mb-3" now={status === COMPLETED ? 100 : game.progress} label={`${status === COMPLETED ? '100' : game.progress}%`} />}
                     </Row>
                     <Row>
                         <Col className="card-icon">{game.isCoop && <div style={{ paddingLeft: '20%', width: '50%', float: 'left' }}><Joystick size={20} /></div>}<div style={{ paddingRight: game.isCoop ? '20%' : '0px', width: game.isCoop ? '50%' : '100%', float: 'left' }}><Joystick size={20} /></div><span>{getPlatform(game.platform)}</span></Col>

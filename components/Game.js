@@ -3,7 +3,6 @@ import { Badge, Button, Container, Modal, ProgressBar, Table } from "react-boots
 import { PencilFill, Trash } from "react-bootstrap-icons";
 import { useBacklog } from "../pages/BacklogProvider";
 import Header from "./Header";
-import { ABANDONED, COMPLETED } from "../constants/states";
 import { useRouter } from "../Router";
 
 export default function Game() {
@@ -11,7 +10,7 @@ export default function Game() {
     const { selectedGame, showEditGameDetails, goBackToBacklog } = useRouter();
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-    const { name, status, platform, releaseYear, genres, igdbRating, progress, igdbRatingCount, abandonedDate, completedDate, isCoop, rating, howLongToBeat, notes, reason, value = '??', ownedAs } = selectedGame;
+    const { name, platform, releaseYear, genres, igdbRating, progress, igdbRatingCount, abandonedDate, backlogScore, completedDate, completed, shelved, backlog, playing, played, isCoop, rating, howLongToBeat, notes, reason, value = '??', ownedAs } = selectedGame;
 
     const { remove } = useBacklog();
 
@@ -69,19 +68,23 @@ export default function Game() {
                         </tr>
                         <tr>
                             <th>Status</th>
-                            <td>{status}</td>
+                            <td>{played ? 'Played' : 'Unplayed'}</td>
                         </tr>
-                        {status === ABANDONED && <tr>
-                            <th>Abandoned</th>
-                            <td>{abandonedDate}</td>
+                        {backlog && <tr>
+                            <th>Backlog </th>
+                            <td>{backlog ? 'Yes' : 'No'} ({backlogScore})</td>
                         </tr>}
-                        {status === COMPLETED && <tr>
+                        {playing && <tr>
+                            <th>Playing</th>
+                            <td>{playing ? 'Yes' : 'No'}</td>
+                        </tr>}
+                        {shelved && <tr>
+                            <th>Shelved</th>
+                            <td>{shelved ? 'Yes' : 'No'}</td>
+                        </tr>}
+                        {completed && <tr>
                             <th>Completed</th>
                             <td>{completedDate}</td>
-                        </tr>}
-                        {status === ABANDONED && <tr>
-                            <th>Reason</th>
-                            <td>{reason}</td>
                         </tr>}
                         <tr>
                             <th>Progress</th>

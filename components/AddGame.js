@@ -34,11 +34,11 @@ export default function AddGame() {
     setSearchQuery('');
   };
 
-  const { hideAddGame, selectedState } = useRouter();
+  const { hideAddGame } = useRouter();
 
   const addToBacklog = (game) => {
     console.log(game);
-    add(game, selectedState);
+    add(game);
     resetSearch();
     hideAddGame();
   };
