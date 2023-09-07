@@ -55,7 +55,7 @@ export default function Game() {
                             <td>{isCoop ? 'Yes' : 'No'}</td>
                         </tr>
                         <tr>
-                            <th>Owned As</th>
+                            <th>Own As</th>
                             <td>{ownedAs}</td>
                         </tr>
                         <tr>

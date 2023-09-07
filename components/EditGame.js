@@ -57,7 +57,7 @@ export default function EditGame() {
         <Table striped size="sm">
           <tbody>
             <tr>
-              <th>Owned As</th>
+              <th>Own As</th>
               <td>
                 <Form.Select value={ownedAs} size="sm" onChange={({ target: { value } }) => changeGameData('ownedAs', value)}>
                   <option value=""></option>
