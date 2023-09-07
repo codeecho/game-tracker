@@ -8,7 +8,7 @@ export const SHELVED = 'Shelved';
 export const ABANDONED = 'Abandoned';
 export const OTHER = 'Other';
 export const PLAYED = 'Played';
-export const ALL = 'All';
+export const TO_CONSIDER = 'To Consider';
 
 const states = [
     WISH_LIST,
@@ -17,17 +17,17 @@ const states = [
     PLAYING,
     COMPLETED,
     PLAYED,
-    ALL
+    TO_CONSIDER
 ];
 
 const evalState = {
-    [WISH_LIST]: (x) => !x.ownedAs,
+    [WISH_LIST]: (x) => !x.ownedAs && !x.toConsider,
     [TO_TRY]: x => !x.played && x.ownedAs && !x.backlog,
     [BACKLOG]: x => x.backlog,
     [PLAYING]: x => x.playing,
     [COMPLETED]: x => x.completed,
-    [PLAYED]: x => x.played && !x.completed && !x.playing,
-    [ALL]: x => true
+    [PLAYED]: x => x.played,
+    [TO_CONSIDER]: x => x.toConsider
 }
 
 export const isInState = (game, state) => evalState[state](game);

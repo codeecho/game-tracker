@@ -10,7 +10,7 @@ export default function Game() {
     const { selectedGame, showEditGameDetails, goBackToBacklog } = useRouter();
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-    const { name, platform, releaseYear, genres, igdbRating, progress, igdbRatingCount, abandonedDate, backlogScore, completedDate, completed, shelved, backlog, playing, played, isCoop, rating, howLongToBeat, notes, reason, value = '??', ownedAs } = selectedGame;
+    const { name, platform, releaseYear, genres, igdbRating, progress, igdbRatingCount, toConsider, backlogScore, completedDate, completed, shelved, backlog, playing, played, isCoop, rating, howLongToBeat, notes, reason, value = '??', ownedAs } = selectedGame;
 
     const { remove } = useBacklog();
 
@@ -70,6 +70,10 @@ export default function Game() {
                             <th>Status</th>
                             <td>{played ? 'Played' : 'Unplayed'}</td>
                         </tr>
+                        {toConsider && <tr>
+                            <th>To Consider </th>
+                            <td>{toConsider ? 'Yes' : 'No'}</td>
+                        </tr>}
                         {backlog && <tr>
                             <th>Backlog </th>
                             <td>{backlog ? 'Yes' : 'No'} ({backlogScore})</td>

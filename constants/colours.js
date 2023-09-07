@@ -1,4 +1,4 @@
-import { ABANDONED, BACKLOG, COMPLETED, NEXT_UP, OTHER, PLAYING, TO_TRY, WISH_LIST, SHELVED, PLAYED, ALL } from "./states";
+import { ABANDONED, BACKLOG, COMPLETED, NEXT_UP, OTHER, PLAYING, TO_TRY, WISH_LIST, SHELVED, PLAYED, TO_CONSIDER } from "./states";
 
 export const stateColours = {
     [WISH_LIST]: 'primary',
@@ -10,5 +10,5 @@ export const stateColours = {
     [OTHER]: 'dark',
     [SHELVED]: 'warning',
     [PLAYED]: 'warning',
-    [ALL]: 'dark'
+    [TO_CONSIDER]: 'dark'
 }

@@ -2,9 +2,9 @@ import Button from 'react-bootstrap/Button';
 import { useBacklog } from '../pages/BacklogProvider';
 import Carousel from 'react-bootstrap/Carousel';
 import Header from './Header';
-import states, { ALL, BACKLOG, COMPLETED, PLAYED, isInState } from '../constants/states';
+import states, { BACKLOG, COMPLETED, PLAYED, isInState } from '../constants/states';
 import { Badge, Card, Col, Container, Dropdown, DropdownButton, Row, Stack } from 'react-bootstrap';
-import { ArrowDownCircleFill, Code, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, ArrowUpCircle, ArrowUpCircleFill, CalendarDate, Collection, Joystick, Justify, LayoutThreeColumns, MenuUp, PlusSquare, Search, SortUp, DiscFill, XCircle, XCircleFill } from 'react-bootstrap-icons';
+import { ArrowDownCircleFill, Code, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, ArrowUpCircle, ArrowUpCircleFill, CalendarDate, Collection, Joystick, Justify, LayoutThreeColumns, MenuUp, PlusSquare, Search, SortUp, DiscFill, XCircle, XCircleFill, Filter, CheckSquareFill } from 'react-bootstrap-icons';
 import { useRouter } from '../Router';
 import { stateColours } from '../constants/colours';
 import GameCard from './GameCard';
@@ -58,13 +58,35 @@ const defaultSortByState = {
   [COMPLETED]: 'completedYear',
   [PLAYED]: 'rating',
   [BACKLOG]: 'backlogScore',
-  [ALL]: 'rating'
 };
+
+const boolFilters = [{
+  label: 'Playing',
+  on: false,
+  filter: (x) => x.playing
+}, {
+  label: 'Completed',
+  on: false,
+  filter: (x) => x.completed
+}, {
+  label: 'Unfinished',
+  on: true,
+  filter: (x) => !x.playing && !x.completed && !x.shelved && !x.abandoned
+}, {
+  label: 'Shelved',
+  on: true,
+  filter: (x) => x.shelved
+}, {
+  label: 'Abandoned',
+  on: true,
+  filter: (x) => x.abandoned
+}]
 
 export default function Backlog() {
   const [selectedSort, setSort] = useState(null);
   const [selectedPlatform, setSelectedPlatform] = useState(null);
   const [selectedOwnedAs, setSelectedOwnedAs] = useState(null);
+  const [selectedBoolFilters, setSelectedBoolFilters] = useState(boolFilters);
 
   const { backlog, backup, restore } = useBacklog();
 
@@ -119,7 +141,14 @@ export default function Backlog() {
             </Dropdown.Item>
           ))}
         </DropdownButton>
-        <Button style={{ position: 'fixed', bottom: '210px', right: '10px', zIndex: 9998 }} onClick={() => { setSelectedPlatform(null); setSelectedOwnedAs(null); }}>
+        {selectedState === PLAYED && <DropdownButton drop="up" title={<Filter />} style={{ position: 'fixed', bottom: '10px', right: '80px', zIndex: 9998 }}>
+          {selectedBoolFilters.map((filter, index) => (
+            <Dropdown.Item key={index} onClick={() => setSelectedBoolFilters(selectedBoolFilters.map(x => x.label === filter.label ? { ...x, on: !x.on } : x))} style={{ zIndex: 9999 }}>
+              {filter.label} {filter.on && <CheckSquareFill />}
+            </Dropdown.Item>
+          ))}
+        </DropdownButton>}
+        <Button style={{ position: 'fixed', bottom: '210px', right: '10px', zIndex: 9998 }} onClick={() => { setSelectedPlatform(null); setSelectedOwnedAs(null); setSort(null); }}>
           <XCircleFill />
         </Button>
         <Carousel className="mt-1" touch={false} controls={false} interval={null} wrap={false} indicators={false} activeIndex={activeStateIndex} onSelect={(index) => setSelectedState(states[index])}>
@@ -127,11 +156,16 @@ export default function Backlog() {
             const previousState = index > 0 ? states[index - 1] : null;
             const nextState = index < states.length - 1 ? states[index + 1] : null;
 
-            const games = backlog.games
+            let games = backlog.games
               .filter((x) => isInState(x, state))
               .filter(x => !selectedPlatform || x.platform === selectedPlatform)
               .filter(x => !selectedOwnedAs || x.ownedAs === selectedOwnedAs);
             const gamesByGroup = [];
+
+            if (selectedState === PLAYED) {
+              const activeFilters = selectedBoolFilters.filter(x => x.on);
+              games = games.filter(x => activeFilters.some(filter => filter.filter(x)));
+            }
 
             if (!sort.grouped) {
               doSort(games, sort.property, sort.direction);

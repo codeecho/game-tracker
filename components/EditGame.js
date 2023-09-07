@@ -16,7 +16,7 @@ export default function EditGame() {
     date: selectedGame.completed ? selectedGame.completedDate : selectedGame.abandonedDate,
   });
 
-  const { name, rating, howLongToBeat, notes, reason, progress, isCoop, date, value = 0, ownedAs, backlog, completed, played, shelved, playing, backlogScore, wishListScore } = gameData;
+  const { name, rating, howLongToBeat, notes, reason, progress, isCoop, date, value = 0, ownedAs, backlog, completed, played, toConsider, shelved, playing, backlogScore, wishListScore } = gameData;
 
   const changeGameData = (prop, value) => {
     setGameData({
@@ -26,7 +26,7 @@ export default function EditGame() {
   };
 
   const saveChanges = () => {
-    const { date, completed, played, shelved } = gameData;
+    const { date, completed, played, shelved, toConsider, backlog } = gameData;
     const completedDate = completed ? date : undefined;
     let completedYear;
     if (completedDate) {
@@ -43,6 +43,7 @@ export default function EditGame() {
       ...gameData,
       completedDate,
       completedYear,
+      toConsider: completed || shelved || playing || backlog ? false : toConsider,
       shelved: completed ? false : shelved,
       played: completed || shelved || playing ? true : played,
     };
@@ -83,6 +84,12 @@ export default function EditGame() {
               <th>Value (£)</th>
               <td>
                 <Form.Control type="number" value={value} onChange={({ target: { value } }) => changeGameData('value', value)} />
+              </td>
+            </tr>
+            <tr>
+              <th>To Consider</th>
+              <td>
+                <Form.Check id="toConsider" checked={toConsider} onChange={({ target: { checked } }) => changeGameData('toConsider', checked)} />
               </td>
             </tr>
             <tr>
