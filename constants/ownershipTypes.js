@@ -1,7 +1,3 @@
-const ownershipTypes = [
-    'Physical',
-    'Repro',
-    'Digital',
-];
+const ownershipTypes = ["Physical", "Repro", "Digital", "Emulated", "Other"];
 
 export default ownershipTypes;
